@@ -1,20 +1,25 @@
 <?php
+/*
+*  @copyright Copyright @ 2022 - 2023 Diego Garcia
+*/
 
 class Plugins
 {
+    private Database $db;
+    private array $reg_plugins = [];
+
+    function __construct($db)
+    {
+        $this->db = $db;
+    }
+
     function scanDir()
     {
 
-        foreach (glob('modules/*', GLOB_ONLYDIR) as $plugins_dir) {
-            $filename = str_replace('modules/', '', $plugins_dir);
-            $full_json_filename = $plugins_dir . '/' . $filename . '.json';
-
-            if (file_exists($full_json_filename)) {
-                $jsondata = file_get_contents($full_json_filename);
-                $plugin_data = json_decode($jsondata);
-
-                array_push($this->registered_plugins, $plugin_data);
-            }
+        foreach (glob('modules/*', GLOB_ONLYDIR) as $plugin_dir) {
+            $plugin_name = basename($plugin_dir);
+            array_push($this->reg_plugins, $plugin_name);
         }
+        //var_dump($this->reg_plugins);
     }
 }

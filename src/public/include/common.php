@@ -23,3 +23,4 @@ require_once('include/Filters.php');
 require_once('include/User.php');
 require_once('include/Web.php');
 require_once('include/Frontend.php');
+require_once('include/Plugins.php');

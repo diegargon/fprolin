@@ -13,13 +13,12 @@ unlink($cfg['sqlite_db']);
 $db = new Database($cfg);
 $db->connect();
 
-
 // USERS
 $db->query('CREATE TABLE IF NOT EXISTS "users" (
                     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                    "username" varchar NOT NULL UNIQUE,
-                    "password" varchar NULL,
-                    "sid" varchar NULL,
+                    "username" VARCHAR NOT NULL UNIQUE,
+                    "password" VARCHAR NULL,
+                    "sid" VARCHAR NULL,
                     "sid_expire" INTEGER DEFAULT 0,
                     "isAdmin" INTEGER DEFAULT 0,
                     "email" VARCHAR NULL,
@@ -47,11 +46,15 @@ $db->query('CREATE TABLE IF NOT EXISTS "config" (
     )');
 
 // MODULES
+
+
 $db->query('CREATE TABLE IF NOT EXISTS "modules" (
-        "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        "name" varchar NOT NULL UNIQUE,
-        "enable" INTEGER DEFAULT 0,
-)');
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "name" VARCHAR NOT NULL,
+    "enable" INTEGER DEFAULT 0,
+    "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+    )');
+
 $db->insert('modules', ["name" => "test"]);
 
 chown($cfg['sqlite_db'], 'www-data');

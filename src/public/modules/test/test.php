@@ -1,4 +1,7 @@
 <?php
+/*
+*  @copyright Copyright @ 2022 - 2023 Diego Garcia
+*/
 
 function test_init()
 {

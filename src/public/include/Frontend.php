@@ -73,18 +73,17 @@ class Frontend
         $cfg = $this->cfg;
         $tpl_file = '';
 
-        if(!empty($tdata['module']['name'])) {
-            $tpl_file .= 'modules/'. $tdata['module']['name'] .'/';
+        if (!empty($tdata['module']['name'])) {
+            $tpl_file .= 'modules/' . $tdata['module']['name'] . '/';
         }
-        
+
         $tpl_file .= 'tpl/' . $this->cfg['theme'] . '/' . $tpl . '.tpl.php';
-        if(!file_exists($tpl_file))
-        {
+        if (!file_exists($tpl_file)) {
             //Fallback to main default
             $tpl_file = 'tpl/default/' . $tpl . '.tpl.php';
-            if(!file_exists($tpl_file)) {
+            if (!file_exists($tpl_file)) {
                 return false;
-            }            
+            }
         }
 
         ob_start();

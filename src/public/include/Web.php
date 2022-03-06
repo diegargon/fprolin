@@ -5,10 +5,11 @@
 
 class Web
 {
-    private array $cfg = [];
-    private array $lng = [];
     private User $user;
     private Database $db;
+    private Plugins $plugins;    
+    private array $cfg = [];
+    private array $lng = [];
     private array $valid_pages = [];
     private $actions = [];
 
@@ -22,6 +23,10 @@ class Web
         $this->db->connect();
 
         $this->user = new User($cfg, $this->db);
+
+        $this->plugins = new Plugins($this->db);
+
+        $this->plugins->scanDir();
     }
 
     function show()
@@ -43,8 +48,6 @@ class Web
         empty($this->user) || $this->user->getId() < 1 ? $req_page = 'login' : null;
 
         //echo $this->user->getId();
-
-
 
         if (in_array($req_page, $this->valid_pages)) {
             return $req_page;
@@ -97,7 +100,6 @@ class Web
         return $page;
     }
 
-
     function page_login()
     {
         $page = [];
@@ -129,7 +131,6 @@ class Web
 
         return $page;
     }
-
 
     /*
         ACTIONS
