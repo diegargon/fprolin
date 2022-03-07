@@ -45,6 +45,16 @@ $db->query('CREATE TABLE IF NOT EXISTS "config" (
         UNIQUE (cfg_key)
     )');
 
+/*
+    PREFERENCES
+*/
+$db->query('CREATE TABLE `prefs` (
+    `id` int NOT NULL,
+    `uid` int NOT NULL,
+    `pref_name` char(255) NOT NULL,
+    `pref_value` char(255) NOT NULL
+  )');
+  
 // MODULES
 
 
