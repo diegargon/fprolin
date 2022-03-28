@@ -5,162 +5,171 @@
 
 class Web
 {
-    private User $user;
     private Database $db;
-    private Plugins $plugins;    
+    private Plugins $plugins;
     private array $cfg = [];
     private array $lng = [];
+    /*
+        valid_pages['index'] => ['plugin_name' => 'mymodule',...];
+    */
     private array $valid_pages = [];
+    /*
+        $provider['SessionManager'] = ['value' => $sm, 'version' => '1.0',...];
+    */
+    private array $provider = [];
     private $actions = [];
 
 
-    function __construct(array $cfg, array $lng)
+    function __construct(array $cfg)
     {
         $this->cfg = $cfg;
-        $this->lng = $lng;
+        //$this->lng = $lng;
 
         $this->db = new Database($cfg);
         $this->db->connect();
+        $this->provider['Database'] = ['value' => $this->db, 'version' => '1.0'];
+        //$this->provider['Language'] =  ['value' => $this->lng, 'version' => '1.0'];
+        //$this->provider['Config'] =  ['value' => $this->cfg, 'version' => '1.0'];
 
-        $this->user = new User($cfg, $this->db);
-
-        $this->plugins = new Plugins($this->db);
-
-        $this->plugins->scanDir();
+        $this->plugins = new Plugins($this);
     }
 
     function show()
     {
-        $page = $this->ValReqPage();
-        if (empty($page)) {
-            exit('Error:  Page not exists or validation error');
+        $req_page = Filters::getString('page');
+        $page = $this->pageExists($req_page);
+
+        if (!$page) {
+            exit('Error: Page not exists');
         }
+        //pr($page);
         $page_data = $this->getPageData($page);
-        //TODO Error/missing page if ($page_data === false)
-        $this->render($page_data);
+        if (is_array($page_data) && !empty($page_data['redirect'])) {
+            $tdata = [];
+            $page = $this->pageExists($page_data['redirect']);
+            //TODO: $page is false/not exists
+            //var_dump($page);
+            !empty($page_data['tdata']) ? $tdata = $page_data['tdata'] : null;
+            //pr($page);
+            $page_data = $this->getPageData($page);
+            empty($page_data['tdata']) ? $page_data['tdata'] = $tdata : $page_data['tdata']  = array_merge($page_data['tdata'], $tdata);
+        }
+        //pr($page_data);
+
+        if (is_array($page_data)) {
+            $this->render($page_data);
+        } else {
+            //TODO Error no page_data
+        }
     }
 
-    private function ValReqPage()
+    function getPageData(array $page)
     {
-        $req_page = Filters::getString('page');
-        (!isset($req_page) || $req_page == '') ? $req_page = 'index' : null;
+        $page_func =  $page['func_name'];
+        $page_data = [];
+        if (function_exists($page_func)) {
+            $page_data = $page_func($this);
+        } else {
+            //TODO error
+        }
 
-        empty($this->user) || $this->user->getId() < 1 ? $req_page = 'login' : null;
+        return $page_data;
+    }
 
-        //echo $this->user->getId();
+    function setPage(array $page)
+    {
+        $this->valid_pages = array_merge($page, $this->valid_pages);
+    }
 
-        if (in_array($req_page, $this->valid_pages)) {
-            return $req_page;
+    function getPage(string $page)
+    {
+        return $this->valid_pages[$page];
+    }
+
+    function getProvider(string $prov)
+    {
+
+        foreach ($this->provider as $key_prov => $val_prov) {
+            if ($key_prov ==  $prov && !empty($val_prov['value'])) {
+                return $val_prov['value'];
+            }
         }
 
         return false;
     }
 
-    function getPageData(string $page)
+    function setProvider(array $providers)
     {
-        $page_func = 'page_' . $page;
-
-        $page_defaults = [];
-        $page_data = [];
-
-        $page_defaults = $this->page_defaults();
-
-        //$page_data = $page_func($this->cfg, $this->lng, $this->user);
-        if ($page == 'login') {
-            $page_data = $this->page_login();
-        } else if ($page == 'logout') {
-            //TODO
-            $page_data['page'] = 'index';
-        } else if ($page === 'index') {
-            $page_data['page'] = 'index';
-            //  $page_data = page_index($this->cfg, $this->db, $this->lng, $this->user);
+        foreach ($providers as $key_provider => $val_provider) {
+            if (!isset($this->provider[$key_provider])) {
+                $this->provider[$key_provider] = $val_provider;
+            } else {
+                //TODO: Error provider already set
+            }
         }
+        return true;
+    }
 
-        return array_merge($page_defaults, $page_data);
+    private function pageExists(string $req_page)
+    {
+        (!isset($req_page) || $req_page == '') ? $req_page = 'index' : null;
+
+        foreach ($this->valid_pages as $k_val_page => $v_val_page) {
+            if ($k_val_page == $req_page) {
+                return $v_val_page;
+            }
+        }
+        return false;
     }
 
     function render(array $page_data)
     {
+        //pr($page_data);
         $frontend = new Frontend($this->cfg, $this->lng);
         $frontend->showPage($page_data);
     }
 
-    function page_defaults()
+    function getConfig() 
     {
-
-        $page = [];
-
-        $user_profile = $this->user->getUser();
-
-        !empty($user_profile['theme']) ? $this->cfg['theme'] = $user_profile['theme'] : null;
-        !empty($user_profile['lang']) ? $this->cfg['lang'] = $user_profile['lang'] : null;
-        !empty($user_profile['charset']) ? $this->cfg['charset'] = $user_profile['charset'] : null;;
-        $page['web_title'] = $this->cfg['web_title'];
-
-        return $page;
+        return $this->cfg;        
+    }
+    function setConfig($cfg) {
+        $this->cfg = array_merge($this->cfg, $cfg);
+    }
+    function getLang() {
+        return $this->lng;
     }
 
-    function page_login()
-    {
-        $page = [];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $username = Filters::postUsername('username');
-            $password = Filters::postPassword('password');
-            if (!empty($username) && !empty($password)) {
-
-                $userid = $this->user->checkUser($username, $password);
-                if (!empty($userid) && $userid > 0) {
-                    $this->user->setUser($userid);
-                    if (empty($cfg['rel_path'])) {
-                        $cfg['rel_path'] = '/';
-                    }
-                    header("Location: {$cfg['rel_path']} ");
-
-                    exit();
-                }
-            }
-        }
-
-        $page['page'] = 'login';
-        $page['tpl'] = 'login';
-        $page['log_in'] = $this->lng['L_LOGIN'];
-        $page['username_placeholder'] = $this->lng['L_USERNAME'];
-        $page['password_placeholder'] = $this->lng['L_PASSWORD'];
-
-        return $page;
+    function setLang($lng) {
+        $this->lng = array_merge($this->lng, $lng);
     }
-
     /*
         ACTIONS
     */
 
-    function regAction($event, $func, $priority = 5)
+    function regAction(string $event, $func, $priority = 5)
     {
-        $this->actions[$event][] = ['function_name' => $func, 'priority' => $priority];
+        $this->actions[$event][] = ['func_name' => $func, 'priority' => $priority];
     }
 
-    function runAction($event, &$params = null)
+    function runAction(string $event, &$params = null)
     {
+
+        $return = [];
 
         if (isset($this->actions[$event])) {
             usort($this->actions[$event], function ($a, $b) {
                 return $a['priority'] - $b['priority'];
             });
 
-            $return = '';
-
             foreach ($this->actions[$event] as $func) {
-
-                if (is_array($func['function_name'])) {
-                    if (method_exists($func['function_name'][0], $func['function_name'][1])) {
-
-                        $return .= call_user_func_array($func['function_name'], [&$params]);
+                if (is_array($func['func_name'])) {
+                    if (method_exists($func['func_name'][0], $func['func_name'][1])) {
+                        $return[] = call_user_func_array($func['func_name'], $params);
                     }
                 } else {
-                    if (function_exists($func['function_name'])) {
-                        $return .= call_user_func_array($func['function_name'], [&$params]);
+                    if (function_exists($func['func_name'])) {
+                        $return[] = call_user_func_array($func['func_name'], $params);
                     }
                 }
             }
@@ -168,11 +177,11 @@ class Web
         return $return;
     }
 
-    function issetAction($this_event)
+    function issetAction(string $this_event)
     {
 
         foreach ($this->actions as $event => $func) {
-            if (($event == $this_event) && function_exists($func[0])) {
+            if (($event == $this_event) && function_exists($func[0]['func_name'])) {
                 return true;
             }
         }

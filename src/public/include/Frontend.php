@@ -15,56 +15,53 @@ class Frontend
         $this->lng = $lng;
     }
 
-    function showPage(array $tdata)
+    function showPage(array $data)
     {
-        $web['main_head'] = $this->cssLinkFile($this->cfg['theme'], $this->cfg['css']);
-        $web['main_footer'] = '';
+        //pr($data);
+        $head = '';
+        $body = '';
+        $footer = '';
 
-        /* Add custom css files */
-        if (!empty($tdata['web_main']['cssfile']) && is_array($tdata['web_main']['cssfile'])) {
-            foreach ($tdata['web_main']['cssfile'] as $cssfile) {
-                $web['main_head'] .= $this->cssLinkFile($this->cfg['theme'], $cssfile);
+        if (!empty($data['css']) && is_array($data['css'])) {
+            foreach ($data['css'] as $css_data) {
+                $head .= $this->cssFile($css_data);
             }
         }
-        /* Add custom js files */
-        if (!empty($tdata['web_main']['jsfile']) && is_array($tdata['web_main']['jsfile'])) {
-            foreach ($tdata['web_main']['jsfile'] as $jsfile) {
-                if (file_exists($jsfile)) {
-                    $web['main_head'] .= $this->jsLinkFile($jsfile);
-                }
+        if (!empty($data['script_link']) && is_array($data['script_link'])) {
+            foreach ($data['script_link'] as $script) {
+                $head .= $this->addScriptLink($script);
             }
         }
-
-        if (!empty($tdata['web_main']['main_head'])) {
-            $web['main_head'] .= $tdata['web_main']['main_head'];
-        }
-        if (!empty($tdata['web_main']['main_head_tpl']) && is_array($tdata['web_main']['main_head_tpl'])) {
-            foreach ($tdata['web_main']['main_head_tpl'] as $head_tpl) {
-                $web['main_head'] .= $this->getTpl($head_tpl, $tdata);
+        if (!empty($data['script_file']) && is_array($data['script_file'])) {
+            foreach ($data['script_file'] as $script) {
+                $head .= $this->addScriptFile($script);
             }
         }
 
-        if (!empty($tdata['web_main']['main_footer'])) {
-            $web['main_footer'] .= $tdata['web_main']['main_footer'];
-        }
 
-        /* Load Templates in tdata[load_tpl] */
-        if (!empty($tdata['load_tpl']) and is_array($tdata['load_tpl']) && count($tdata['load_tpl']) > 0) {
-            foreach ($tdata['load_tpl'] as $tpl) {
-                if (!empty($tpl['file']) && !empty($tpl['place'])) {
-                    if (empty($tdata[$tpl['place']])) {
-                        $tdata[$tpl['place']] = $this->getTpl($tpl['file'], $tdata);
+        if (!empty($data['load_tpl']) and is_array($data['load_tpl']) && count($data['load_tpl']) > 0) {
+
+            foreach ($data['load_tpl'] as $tpl_data) {
+                //TODO resolv multiple father/childs levels
+                // pr($tpl_data);
+                if (!empty($tpl_data['tpl_father']) && !empty($tpl_data['tpl_spot'])) {
+                    if (isset($data['load_tpl'][$tpl_data['tpl_father']][$tpl_data['tpl_spot']])) {
+                        $data['load_tpl'][$tpl_data['tpl_father']][$tpl_data['tpl_spot']] .= $this->getTpl($tpl_data['tpl'], $tpl_data);
                     } else {
-                        $tdata[$tpl['place']] .= $this->getTpl($tpl['file'], $tdata);
+                        $data['load_tpl'][$tpl_data['tpl_father']][$tpl_data['tpl_spot']] = $this->getTpl($tpl_data['tpl'], $tpl_data);
                     }
                 }
             }
+            //pr($data);
+            foreach ($data['load_tpl'] as $tpl_data) {                
+                if (!empty($tpl_data['tpl']) && empty($tpl_data['tpl_father']) && empty($tpl_data['tpl_spot'])) {
+                    // pr($tpl_data);
+                    $body .= $this->getTpl($tpl_data['tpl'], $tpl_data);
+                }
+            }
         }
 
-        $web['main_body'] = $this->getTpl($tdata['tpl'], $tdata);
-
-        //echo $this->getTpl('main', array_merge($tdata, $web));
-        echo $this->getTpl('main', $web);
+        echo $this->main_struct($head, $body, $footer);
     }
 
     function getTpl(string $tpl, array $tdata = [])
@@ -73,17 +70,15 @@ class Frontend
         $cfg = $this->cfg;
         $tpl_file = '';
 
-        if (!empty($tdata['module']['name'])) {
-            $tpl_file .= 'modules/' . $tdata['module']['name'] . '/';
+        if (!empty($tdata['plugin'])) {
+            $tpl_file .= 'plugins/' . $tdata['plugin'] . '/';
         }
 
         $tpl_file .= 'tpl/' . $this->cfg['theme'] . '/' . $tpl . '.tpl.php';
+
         if (!file_exists($tpl_file)) {
-            //Fallback to main default
-            $tpl_file = 'tpl/default/' . $tpl . '.tpl.php';
-            if (!file_exists($tpl_file)) {
-                return false;
-            }
+            echo "error gettpl";
+            return false;
         }
 
         ob_start();
@@ -92,57 +87,46 @@ class Frontend
         return ob_get_clean();
     }
 
-    function cssLinkFile(string $theme, string $css)
+    function cssFile(array $css_data)
     {
-        $css_file = 'tpl/' . $theme . '/css/' . $css . '.css';
-        !file_exists($css_file) ? $css_file = 'tpl/default/css/default.css' : null;
+        $css_file = 'plugins/' . $css_data['plugin'] . '/tpl/' . $this->cfg['theme'] . '/css/' . $css_data['name'] . '.css';
+        if (!file_exists($css_file)) {
+            return false;
+        }
         $css_file .= '?nocache=' . time(); //TODO: To Remove: avoid cache css while dev
         $css_file = '<link rel="stylesheet" href="' . $css_file . '">' . "\n";
 
         return $css_file;
     }
 
-    function jsLinkFile(string $jsfile)
+    function addScriptLink(string $script)
     {
-        return '<script src="' . $jsfile . '"></script>' . "\n";
+        return '<script src="' . $script . '"></script>' . "\n";
     }
 
-    function msgBox(array $msg)
+    function addScriptFile(array $script)
     {
-
-        (substr($msg['title'], 0, 2) == 'L_') ? $msg['title'] = $this->lng[$msg['title']] : null;
-        (substr($msg['body'], 0, 2) == 'L_') ? $msg['body'] = $this->lng[$msg['body']] : null;
-        return $this->getTpl('msgbox', $msg);
-    }
-
-    function msgPage(array $msg)
-    {
-
-        $footer = $this->getFooter();
-        $menu = ''; //$this->getMenu();
-        $body = $this->msgBox(['title' => $msg['title'], 'body' => $msg['body']]);
-        $tdata = ['menu' => $menu, 'body' => $body, 'footer' => $footer];
-        //$tdata['css_file'] = $this->getCssFile($this->cfg['theme'], $this->cfg['css']);
-        echo $this->getTpl('html_mstruct', $tdata);
-
-        exit();
+        $script_file = 'plugins/' . $script['plugin'] . '/tpl/' . $this->cfg['theme'] . '/js/' . $script['name'] . '.js';
+        return '<script src="' . $script_file . '"></script>' . "\n";
     }
 
 
-    function getFooter()
+    function main_struct(string $head, string $body, string $footer)
     {
-        /* TODO
-          global $db, $cfg;
-
-          $cfg['show_querys'] ?? 0;
-          $querys = $db->getQuerys();
-          valid_array($querys) ? $num_querys = count($querys) : $num_querys = 0;
-          $tdata['num_querys'] = $num_querys;
-          $cfg['show_querys'] ? $tdata['querys'] = $querys : null;
-
-          return $this->getTpl('footer', $tdata);
-         *
-         */
-        return $this->getTpl('footer', []);
+        return '<!DOCTYPE html>' . "\n" .
+            '<html lang="' . $this->cfg['lang'] . '">' . "\n" .
+            '<head>' . "\n" .
+            '    <meta charset="' . $this->cfg['charset'] . '" />' . "\n" .
+            '    <meta name="viewport" content="width=device-width, initial-scale=1.0" />' . "\n" .
+            '    <link rel="shortcut icon" href="favicon.ico" />' . "\n" .
+            '    <meta name="referrer" content="never">' . "\n" .
+            '    <title>' . $this->cfg['web_title'] . '</title>' . "\n" .
+            '' .     $head . '' . "\n" .
+            '</head>' . "\n" .
+            '<body>' . "\n" .
+            '' .     $body . '' . "\n" .
+            '<footer>' . $footer . '</footer>' . "\n" .
+            '</body>' . "\n" .
+            '</html>' . "\n";
     }
 }

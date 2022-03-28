@@ -17,7 +17,7 @@
     <link rel="shortcut icon" href="favicon.ico" />
     <meta name="referrer" content="never">
     <title><?= $cfg['web_title'] ?></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
     <script>
         window.onload = function() {
             document.getElementById("loading_wrap").style.display = "none";

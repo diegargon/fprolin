@@ -1,10 +1,14 @@
+
 <?php
+
+
 
 class Database
 {
 
     private string $dbpath = '';
     private SQLite3 $db;
+    private static $version = '2.0';
 
     public function __construct(array $cfg)
     {
@@ -27,7 +31,7 @@ class Database
 
         $this->db->busyTimeout(5000);
         //$this->db->enableExceptions(true);
-        $this->db->exec('PRAGMA journal_mode = wal;');
+        //$this->db->exec('PRAGMA journal_mode = wal;');
     }
 
     /*
@@ -82,7 +86,6 @@ class Database
 
     public function select(string $table, string $what = null, array $where = null, string $extra = null)
     {
-
         $bind_values = [];
 
         $query = 'SELECT ';
@@ -278,14 +281,14 @@ class Database
     {
         $results->finalize();
     }
-
+    /*
     public function getDbVersion()
     {
         global $cfg;
 
         return !empty($cfg['db_version']) ? $cfg['db_version'] : false;
     }
-
+    */
     public function getQuerys()
     {
         return $this->querys;

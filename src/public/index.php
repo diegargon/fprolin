@@ -5,5 +5,5 @@
 
 require_once('include/common.php');
 
-$web = new Web($cfg, $lng);
+$web = new Web($cfg);
 $web->show();
