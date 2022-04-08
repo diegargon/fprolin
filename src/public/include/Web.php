@@ -143,6 +143,30 @@ class Web
     function setLang($lng) {
         $this->lng = array_merge($this->lng, $lng);
     }
+
+    /* 
+        Refresher
+    */
+    function refresh() {
+        $req_page = Filters::getString('page');    
+        $sm = $this->getProvider('SessionManager');
+        $id = $sm->getId();        
+        $isAdmin = $sm->isAdmin() ? true : false;
+
+        $ret = [];
+
+        if(empty($id) || $id < 1 || !$isAdmin) {
+            echo '{"result": "fail", "error", "identification error"}';
+            return false;
+        }
+
+        $ret[] = $this->runAction('refresh_'. $req_page, [$this]);
+
+        foreach($ret as $result) {
+            echo json_encode($result);
+        }
+
+    } 
     /*
         ACTIONS
     */
@@ -152,7 +176,7 @@ class Web
         $this->actions[$event][] = ['func_name' => $func, 'priority' => $priority];
     }
 
-    function runAction(string $event, &$params = null)
+    function runAction(string $event, $params = null)
     {
 
         $return = [];
