@@ -9,6 +9,7 @@ ini_set("display_errors", 1);
 
 require_once('config/config.priv.php');
 require_once('include/Database.php');
+require_once('include/WOS.php');
 require_once('include/utils.php');
 require_once('include/Filters.php');
 require_once('include/Web.php');

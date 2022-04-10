@@ -6,9 +6,13 @@
 class Web
 {
     private Database $db;
+    private WoS $wos;
     private Plugins $plugins;
+
     private array $cfg = [];
     private array $lng = [];
+    private array $refresh = [];
+
     /*
         valid_pages['index'] => ['plugin_name' => 'mymodule',...];
     */
@@ -27,6 +31,9 @@ class Web
 
         $this->db = new Database($cfg);
         $this->db->connect();
+
+        $this->wos = new WOS($this);
+
         $this->provider['Database'] = ['value' => $this->db, 'version' => '1.0'];
         //$this->provider['Language'] =  ['value' => $this->lng, 'version' => '1.0'];
         //$this->provider['Config'] =  ['value' => $this->cfg, 'version' => '1.0'];
@@ -129,44 +136,87 @@ class Web
         $frontend->showPage($page_data);
     }
 
-    function getConfig() 
+    function getConfig()
     {
-        return $this->cfg;        
+        return $this->cfg;
     }
-    function setConfig($cfg) {
+    function setConfig($cfg)
+    {
         $this->cfg = array_merge($this->cfg, $cfg);
     }
-    function getLang() {
+    function getLang()
+    {
         return $this->lng;
     }
 
-    function setLang($lng) {
+    function setLang($lng)
+    {
         $this->lng = array_merge($this->lng, $lng);
     }
 
     /* 
         Refresher
     */
-    function refresh() {
-        $req_page = Filters::getString('page');    
+
+    function setRefreshCMD(string $page, string $cmd)
+    {
+        $this->refresh[$page][] = $cmd;
+    }
+
+    function refresh()
+    {
+        $req_page = Filters::getString('page');
         $sm = $this->getProvider('SessionManager');
-        $id = $sm->getId();        
+        $id = $sm->getId();
         $isAdmin = $sm->isAdmin() ? true : false;
 
         $ret = [];
 
-        if(empty($id) || $id < 1 || !$isAdmin) {
+        if (empty($id) || $id < 1 || !$isAdmin) {
             echo '{"result": "fail", "error", "identification error"}';
             return false;
         }
 
-        $ret[] = $this->runAction('refresh_'. $req_page, [$this]);
+        //        $ret = $this->runAction('refresh_'. $req_page, [$this]);
 
-        foreach($ret as $result) {
-            echo json_encode($result);
+
+        $result['result'] = 'ok';
+        $result['errors_count'] = 0;
+        $result['error_msg'] = [];
+        $result['data'] = [];
+        if (empty($this->refresh[$req_page]) || count($this->refresh[$req_page]) < 0) {
+            echo '{"result": "fail", "error", "no refresh function"}';
+            return false;
         }
 
-    } 
+        foreach ($this->refresh[$req_page] as $refresh_cmd) {
+            $result['cmds'][] = $refresh_cmd;
+        }
+
+        $response = $this->wos->sendCMD($this->refresh[$req_page]);
+        
+        if (!empty($response['result']) && $response['result'] == 'ok' && !empty($response['data'])) {
+            foreach ($response['data'] as $data_element) {                
+                if (!empty($data_element['id']) && !empty($data_element['value'])) {
+                    $result['data'][] = [
+                        'id' => $data_element['id'],
+                        'type' => $data_element['type'],
+                        'value' => $data_element['value']
+                    ];
+                }
+            }
+        } else {
+            $result['errors_count']++;
+            if (!empty($response['error_msg'])) {
+                $result['error_msg'][] = $response['error_msg'];
+            }
+        }
+
+
+        $result =  json_encode($result);
+
+        print $result;
+    }
     /*
         ACTIONS
     */

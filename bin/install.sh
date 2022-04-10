@@ -47,3 +47,7 @@ ln -s ${CWD_ROOT}/src/public /var/www/html
 chown www-data:www-data /var/www/html/data/
 
 systemctl restart lighttpd
+
+#Used in WOSProxy
+apt install python3-pip -y
+pip install psutil

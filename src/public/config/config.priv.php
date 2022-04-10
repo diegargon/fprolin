@@ -15,3 +15,4 @@ $cfg['web_title'] = $cfg['appname'];
 $cfg['lang'] = 'en';
 $cfg['sid_expire'] = 65000;
 $cfg['rel_path'] = '/';
+$cfg['wos_socket'] = '/var/run/wosproxy.socket';
