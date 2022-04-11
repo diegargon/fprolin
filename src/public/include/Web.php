@@ -158,9 +158,14 @@ class Web
         Refresher
     */
 
-    function setRefreshCMD(string $page, string $cmd)
+    function setRefreshCMD(string $page, string $cmd, string $params = '')
     {
-        $this->refresh[$page][] = $cmd;
+        $this->refresh[$page][] =
+            [
+                'cmd' => $cmd,
+                'parms' => $params             
+            ];
+
     }
 
     function refresh()

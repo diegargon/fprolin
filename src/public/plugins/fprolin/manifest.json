@@ -1,0 +1,15 @@
+{
+    "name": "fprolin",
+    "provide": "main",
+    "version": 0.1,
+    "depends": [
+        {
+            "name": "Core",
+            "min_version": 0.1,
+            "max_version": 0.9
+        }
+    ],
+    "priority": 2,
+    "optional": [],
+    "conflicts": []    
+}
