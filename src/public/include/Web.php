@@ -163,9 +163,8 @@ class Web
         $this->refresh[$page][] =
             [
                 'cmd' => $cmd,
-                'parms' => $params             
+                'parms' => $params
             ];
-
     }
 
     function refresh()
@@ -199,9 +198,9 @@ class Web
         }
 
         $response = $this->wos->sendCMD($this->refresh[$req_page]);
-        
+
         if (!empty($response['result']) && $response['result'] == 'ok' && !empty($response['data'])) {
-            foreach ($response['data'] as $data_element) {                
+            foreach ($response['data'] as $data_element) {
                 if (!empty($data_element['id']) && !empty($data_element['value'])) {
                     $result['data'][] = [
                         'id' => $data_element['id'],

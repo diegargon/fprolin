@@ -20,7 +20,7 @@ function fprolin_init(Web $web)
     $web->setPage(['logout' => ['name' => 'logout', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_logout']]);
     $web->setPage(['options' => ['name' => 'options', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_options']]);
 
-//    $web->regAction('refresh_system', 'fprolin_refresh_system');
+    //    $web->regAction('refresh_system', 'fprolin_refresh_system');
     $web->setRefreshCMD('system', 'get_system.py');
     $web->setRefreshCMD('system', 'get_psutil.py');
 }

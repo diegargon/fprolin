@@ -12,7 +12,7 @@ class SessionManager
     private array $prefs = [];
 
     public function __construct(array $cfg, Database $db)
-    {        
+    {
         $this->db = $db;
         $this->cfg = $cfg;
 
@@ -29,7 +29,7 @@ class SessionManager
             if (!empty($this->user['sid']) && $this->user['sid'] == $_COOKIE['sid']) {
                 $_SESSION['uid'] = $_COOKIE['uid'];
                 $this->updateSessionId();
-            } else {                
+            } else {
                 $this->user = [];
                 $this->user['id'] = -1;
             }
@@ -155,7 +155,8 @@ class SessionManager
         return sha1($password);
     }
 
-    function destroy() {
+    function destroy()
+    {
         session_destroy();
         setcookie('sid', null, -1, $this->cfg['rel_path']);
         setcookie('uid', null, -1, $this->cfg['rel_path']);

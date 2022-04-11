@@ -1,2 +1,1 @@
-
 <div><?= $tdata['msg'] ?></div>
