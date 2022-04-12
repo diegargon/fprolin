@@ -11,7 +11,8 @@ class Web
 
     private array $cfg = [];
     private array $lng = [];
-    private array $refresh = [];
+
+    private array $retrieve = [];
 
     /*
         valid_pages['index'] => ['plugin_name' => 'mymodule',...];
@@ -158,13 +159,48 @@ class Web
         Refresher
     */
 
-    function setRefreshCMD(string $page, string $cmd, string $params = '')
+    function setRetrieve(string $page, string $cmd, string $params = '', string $type = 'static')
     {
-        $this->refresh[$page][] =
+        $this->retrieve[$page][] =
             [
+                'type' => $type,
                 'cmd' => $cmd,
                 'parms' => $params
             ];
+    }
+
+    function retrieve($page, $type = "all")
+    {
+
+        if (empty($this->retrieve[$page]) || count($this->retrieve[$page]) < 0) {
+            return false;
+        }
+
+        $result['result'] = 'ok';
+        $result['errors_count'] = 0;
+        $result['error_msg'] = [];
+        $result['data'] = [];
+        
+        foreach ($this->retrieve[$page] as $retrieve_cmd) {
+            if ($type == "all" || $retrieve_cmd['type'] == $type) {              
+                $result['cmds'][] = $retrieve_cmd;
+            }
+        }
+
+
+        $response = $this->wos->sendCMD($result['cmds']);
+
+        //pr_dbg($response);
+        if (!empty($response['result']) && $response['result'] == 'ok' && !empty($response['data'])) {
+            $result['data'] = $response['data'];
+        } else {
+            $result['errors_count']++;
+            if (!empty($response['error_msg'])) {
+                $result['error_msg'][] = $response['error_msg'];
+            }
+        }
+
+        return $result;
     }
 
     function refresh()
@@ -177,43 +213,14 @@ class Web
         $ret = [];
 
         if (empty($id) || $id < 1 || !$isAdmin) {
-            echo '{"result": "fail", "error", "identification error"}';
+            echo '{"result": "fail", "error": "identification error"}';
             return false;
         }
 
-        //        $ret = $this->runAction('refresh_'. $req_page, [$this]);
-
-
-        $result['result'] = 'ok';
-        $result['errors_count'] = 0;
-        $result['error_msg'] = [];
-        $result['data'] = [];
-        if (empty($this->refresh[$req_page]) || count($this->refresh[$req_page]) < 0) {
-            echo '{"result": "fail", "error", "no refresh function"}';
+        $result = $this->retrieve($req_page, 'dinamic');
+        if (!$result) {
+            echo '{"result": "fail", "error": "no retrieve data"}';
             return false;
-        }
-
-        foreach ($this->refresh[$req_page] as $refresh_cmd) {
-            $result['cmds'][] = $refresh_cmd;
-        }
-
-        $response = $this->wos->sendCMD($this->refresh[$req_page]);
-
-        if (!empty($response['result']) && $response['result'] == 'ok' && !empty($response['data'])) {
-            foreach ($response['data'] as $data_element) {
-                if (!empty($data_element['id']) && !empty($data_element['value'])) {
-                    $result['data'][] = [
-                        'id' => $data_element['id'],
-                        'type' => $data_element['type'],
-                        'value' => $data_element['value']
-                    ];
-                }
-            }
-        } else {
-            $result['errors_count']++;
-            if (!empty($response['error_msg'])) {
-                $result['error_msg'][] = $response['error_msg'];
-            }
         }
 
 
@@ -224,7 +231,7 @@ class Web
     /*
         ACTIONS
     */
-
+/*
     function regAction(string $event, $func, $priority = 5)
     {
         $this->actions[$event][] = ['func_name' => $func, 'priority' => $priority];
@@ -266,4 +273,5 @@ class Web
 
         return false;
     }
+    */
 }

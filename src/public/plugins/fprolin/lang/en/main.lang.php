@@ -41,7 +41,6 @@ $lng = [
     //'L_MEM' => 'Mem',
     //N
     'L_NCPU' => 'NºCpus',
-    'L_NTHREADS' => 'NºThreads',
     //'L_NONE' => 'Nada',
     //O
     'L_OPTIONS' => 'Options',
@@ -77,7 +76,7 @@ $lng = [
     'L_SERVICES' => 'Servicios',
     */
     //T
-    'L_TIME' => 'Hora',
+    'L_TIME' => 'Time',
     //'L_THIS_SYSTEM' => 'This',
     //U
     'L_USERNAME' => 'Username',

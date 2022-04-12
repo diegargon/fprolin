@@ -36,10 +36,11 @@ class WOS
         $response = fread($sock, 4096);
         fclose($sock);
 
+        
         //Receive json  decode to array
         $response = json_decode($response, true);
-
-        //var_dump($response);
+        //pr($response);
+        
         return $response;
     }
 }

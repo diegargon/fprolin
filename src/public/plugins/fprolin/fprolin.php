@@ -20,33 +20,9 @@ function fprolin_init(Web $web)
     $web->setPage(['logout' => ['name' => 'logout', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_logout']]);
     $web->setPage(['options' => ['name' => 'options', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_options']]);
 
-    //    $web->regAction('refresh_system', 'fprolin_refresh_system');
-    $web->setRefreshCMD('system', 'get_system.py');
-    $web->setRefreshCMD('system', 'get_psutil.py');
+    $web->setRetrieve('system', 'get_system.py','', 'static');
+    $web->setRetrieve('system', 'get_system_refresh.py', '', 'dinamic');
 }
-
-/*
-function fprolin_init_refresh(Web $web)
-{
-    $web->regAction('refresh_system', 'fprolin_refresh_system');
-}
-
-function fprolin_refresh_system(Web $web)
-{
-    $msg = [
-        'result' => 'ok', 
-        'plugin' => 'fprolin', 
-        'refresh_func' => 'fprolin_refresh_system',
-        'data' => [
-            ['id' => 'hostname', 'value' => 'hostname.com'],
-            ['id' => 'os', 'value' => 'linux'],
-        ]
-    ];
-
-    return $msg;
-    
-}
-*/
 
 function fprolin_main_sketch(Web $web)
 {
@@ -191,17 +167,27 @@ function fprolin_page_system(Web $web)
 
     $page['page'] = 'system';
 
+
     //Tpl test  Added to main var in fprolin template
-    $page['load_tpl']['test'] = [
+    $page['load_tpl']['system'] = [
         'plugin' => $plugin_name,
         'tpl' => 'system',
         'tpl_father' => 'fprolin',
         'tpl_spot' => 'main',
-        'os' => '',
-        'hostname' => '',
     ];
 
-    //pr($page);
+    $page_data =  $web->retrieve($page['page'], 'static');
+    $page_data = $page_data['data'];
+    
+    //pr_dbg($page_data);
+    foreach($page_data as $data ) {
+        if(!empty($data['id']) && !empty($data['value'])) {
+            $page['load_tpl']['system'][$data['id']] = $data['value'];
+        }       
+    }
+    
+
+    //pr_dbg($page);
 
     return $page;
 }

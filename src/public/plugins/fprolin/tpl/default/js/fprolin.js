@@ -64,10 +64,15 @@ function refresh(page) {
                 }
                 
                 for (const element of jsonData.data) {
-                    //console.log(jsonData.data);
-                    if($("#" + element.id).length != 0 && element.type === 'text') {                        
+                    //console.log(element);
+                    if($("#" + element.id).length != 0 && element.type === 'text') { // element exists
                         $('#'+ element.id).text(element.value);
+                    } else if ($("#" + element.id).length != 0 && element.type === 'value') {
+                        $('#'+ element.id).val(element.value);
                     }
+                    //} else if ($("#" + element.id).length != 0 && element.type === 'text') {
+
+                    
                 }
                 setTimeout(refresh, 5000, page);
             });
