@@ -180,9 +180,10 @@ class Web
         $result['errors_count'] = 0;
         $result['error_msg'] = [];
         $result['data'] = [];
-        
+
         foreach ($this->retrieve[$page] as $retrieve_cmd) {
-            if ($type == "all" || $retrieve_cmd['type'] == $type) {              
+            //pr_dbg($retrieve_cmd);
+            if ($type == "all" || $retrieve_cmd['type'] == "all" || ($retrieve_cmd['type'] == $type)) {
                 $result['cmds'][] = $retrieve_cmd;
             }
         }
@@ -231,7 +232,7 @@ class Web
     /*
         ACTIONS
     */
-/*
+    /*
     function regAction(string $event, $func, $priority = 5)
     {
         $this->actions[$event][] = ['func_name' => $func, 'priority' => $priority];

@@ -20,8 +20,9 @@ function fprolin_init(Web $web)
     $web->setPage(['logout' => ['name' => 'logout', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_logout']]);
     $web->setPage(['options' => ['name' => 'options', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_options']]);
 
-    $web->setRetrieve('system', 'get_system.py','', 'static');
+    $web->setRetrieve('system', 'get_system.py', '', 'static');
     $web->setRetrieve('system', 'get_system_refresh.py', '', 'dinamic');
+    $web->setRetrieve('system', 'get_network.py', '', 'all');
 }
 
 function fprolin_main_sketch(Web $web)
@@ -178,14 +179,14 @@ function fprolin_page_system(Web $web)
 
     $page_data =  $web->retrieve($page['page'], 'static');
     $page_data = $page_data['data'];
-    
+
     //pr_dbg($page_data);
-    foreach($page_data as $data ) {
-        if(!empty($data['id']) && !empty($data['value'])) {
+    foreach ($page_data as $data) {
+        if (!empty($data['id']) && !empty($data['value'])) {
             $page['load_tpl']['system'][$data['id']] = $data['value'];
-        }       
+        }
     }
-    
+
 
     //pr_dbg($page);
 

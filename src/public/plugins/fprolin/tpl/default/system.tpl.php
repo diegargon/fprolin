@@ -57,8 +57,9 @@
             </div>
             <div class="divTableRow">
                 <div class="divTableCell"><?= $lng['L_LOADAVG'] ?>:</div>
-                <div class="divTableCell"><progress id="load_avg_value" max="1" value="0"><<span id="load_avg"></span>/progress></div>
-            </div>                        
+                <div class="divTableCell"><progress id="load_avg_value" max="1" value="0">
+                        <<span id="load_avg"></span>/progress></div>
+            </div>
         </div>
     </div>
     <!-- DiskTable -->
@@ -69,20 +70,55 @@
                 <div class="divTableHeading"></div>
                 <div class="divTableHeading"></div>
             </div>
-        <?php
-        foreach ($tdata['disks'] as $disk) {
-        ?>
-            <div class="divTableRow">
-                <div class="divTableCell"><?= $disk['disk_device'] ?></div>
-                <div class="divTableCell"><?= $disk['disk_mountpoint'] ?></div>
-                <div class="divTableCell"><span id='disk_used_percent'><?= $disk['disk_used_percent'] ?>%</span></div>
-            </div>
-        <?php 
-        }    
-        ?>
+            <?php
+            foreach ($tdata['disks'] as $disk) {
+            ?>
+                <div class="divTableRow">
+                    <div class="divTableCell"><?= $disk['disk_device'] ?></div>
+                    <div class="divTableCell"><?= $disk['disk_mountpoint'] ?></div>
+                    <div class="divTableCell"><span id='disk_used_percent'><?= $disk['disk_used_percent'] ?>%</span></div>
+                </div>
+            <?php
+            }
+            ?>
         </div>
-    </div>    
+    </div>
     <!-- /DiskTable -->
+    <!-- NetworkTable -->
+    <div class="divTable">
+        <div class="divTableBody">
+            <div class="divTableRow">
+                <div class="divTableHeading"><?= $lng['L_NETWORK'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_DATA_RECV'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_DATA_SENT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_PACKETS_RECV'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_PACKETS_SENT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_ERROR_IN'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_ERROR_OUT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_DROP_IN'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_DROP_OUT'] ?></div>
+            </div>
+            <?php
+            foreach ($tdata['network'] as $network) {
+            ?>
+                <div class="divTableRow">
+                    <div class="divTableCell"><span id="net_device_<?= $network['id'] ?>"><?= $network['net_device'] ?></span></div>
+                    <div class="divTableCell"><span id="net_bytes_recv_<?= $network['id'] ?>"><?= $network['net_bytes_recv'] ?></span></div>
+                    <div class="divTableCell"><span id="net_bytes_sent_<?= $network['id'] ?>"><?= $network['net_bytes_sent'] ?></span></div>
+                    <div class="divTableCell"><span id="net_packets_recv_<?= $network['id'] ?>"><?= $network['net_packets_recv'] ?></span></div>
+                    <div class="divTableCell"><span id="net_packets_sent_<?= $network['id'] ?>"><?= $network['net_packets_sent'] ?></span></div>
+                    <div class="divTableCell"><span id="net_err_in<?= $network['id'] ?>"><?= $network['net_err_in'] ?></span></div>
+                    <div class="divTableCell"><span id="net_err_out<?= $network['id'] ?>"><?= $network['net_err_out'] ?></span></div>
+                    <div class="divTableCell"><span id="net_drop_in<?= $network['id'] ?>"><?= $network['net_drop_in'] ?></span></div>
+                    <div class="divTableCell"><span id="net_drop_out<?= $network['id'] ?>"><?= $network['net_drop_out'] ?></span></div>
+                </div>
+            <?php
+            }
+            ?>
+        </div>
+    </div>
+    <!-- /NetworkTable -->
+
     <!--
 <p><?= $lng['L_PARTITIONS'] ?>: <span id="partitions"></span></p>
 <p><?= $lng['L_DISK_USAGE'] ?>: <span id="disk_usage"></span></p>

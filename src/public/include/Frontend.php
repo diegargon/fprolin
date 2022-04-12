@@ -53,7 +53,7 @@ class Frontend
                 }
             }
             //pr($data);
-            foreach ($data['load_tpl'] as $tpl_data) {                
+            foreach ($data['load_tpl'] as $tpl_data) {
                 if (!empty($tpl_data['tpl']) && empty($tpl_data['tpl_father']) && empty($tpl_data['tpl_spot'])) {
                     // pr($tpl_data);
                     $body .= $this->getTpl($tpl_data['tpl'], $tpl_data);

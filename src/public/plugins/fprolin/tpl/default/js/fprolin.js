@@ -65,12 +65,32 @@ function refresh(page) {
                 
                 for (const element of jsonData.data) {
                     //console.log(element);
+                    //text <div id="something">?</div> 
                     if($("#" + element.id).length != 0 && element.type === 'text') { // element exists
                         $('#'+ element.id).text(element.value);
+                    //value <progress id="something" value="?"></progress>                         
                     } else if ($("#" + element.id).length != 0 && element.type === 'value') {
                         $('#'+ element.id).val(element.value);
+                    //text values in array    
+                    } else if( $.isArray(element.value)) {
+                        /* 
+                            messy... is a array object,  example:
+                            0: Object { id: "lo", net_device: "lo", net_bytes_sent: 341739904, … }
+                            the id tag in html for update must be example : net_device_+ id   mean id="net_device_lo"
+                        */
+                    
+                        values = element.value;
+                        //console.log(values);                        
+                        $.each( values, function( key, value ) {
+                            //console.log(value['id']);
+                            for (var tag in value) {                                
+                                if($("#" + tag + '_' + value['id']).length != 0) {
+                                    $('#'+ tag + '_' + value['id']).text(value[tag]);                                    
+                                }                                
+                            }                            
+                            
+                          });
                     }
-                    //} else if ($("#" + element.id).length != 0 && element.type === 'text') {
 
                     
                 }

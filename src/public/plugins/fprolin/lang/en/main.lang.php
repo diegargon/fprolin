@@ -15,8 +15,15 @@ $lng = [
     'L_DASHBOARD' => 'Dashboard',
     'L_DISK_USAGE' => 'Disk usage',
     'L_DISK_IO' => 'Disk IO',
+    'L_DATA_SENT' => 'Data Sent',
+    'L_DATA_RECV' => 'Data Recv',
+    'L_DROP_IN' => 'Drop IN',
+    'L_DROP_OUT' => 'Drop OUT',
     //    'L_DELETE' => 'Delete',
     //    'L_DISTRIBUTION' => 'Distribucion',
+    //E
+    'L_ERROR_IN' => 'Err IN',
+    'L_ERROR_OUT' => 'Err OUT',
     //H
     'L_HOME' => 'Home',
     'L_HOSTNAME' => 'Hostname',
@@ -41,6 +48,7 @@ $lng = [
     //'L_MEM' => 'Mem',
     //N
     'L_NCPU' => 'NºCpus',
+    'L_NETWORK' => 'Network',
     //'L_NONE' => 'Nada',
     //O
     'L_OPTIONS' => 'Options',
@@ -54,6 +62,8 @@ $lng = [
     'L_PARTITIONS' => 'Partitions',
     'L_PASSWORD' => 'Password',
     'L_PROCESSADOR' => 'Processador',
+    'L_PACKETS_SENT' => 'Pkts Sent',
+    'L_PACKETS_RECV' => 'Pkts Recv',
     //Q    
     //R
     'L_RAMUSAGE' => 'Ram usage',
