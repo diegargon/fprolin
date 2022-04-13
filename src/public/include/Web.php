@@ -12,6 +12,9 @@ class Web
     private array $cfg = [];
     private array $lng = [];
 
+    /* Content common page data */
+    private array $webdata = [];
+
     private array $retrieve = [];
 
     /*
@@ -69,6 +72,21 @@ class Web
         } else {
             //TODO Error no page_data
         }
+    }
+
+    function getWebData()
+    {
+        return $this->webdata;
+    }
+
+    function setWebData(array $webdata)
+    {
+        $this->webdata = $webdata;
+    }
+
+    function addWebData(array $webdata)
+    {
+        $this->webdata = array_merge_recursive($this->webdata, $webdata);
     }
 
     function getPageData(array $page)
@@ -132,7 +150,7 @@ class Web
 
     function render(array $page_data)
     {
-        //pr($page_data);
+        //pr_dbg($page_data);
         $frontend = new Frontend($this->cfg, $this->lng);
         $frontend->showPage($page_data);
     }
@@ -153,6 +171,8 @@ class Web
     function setLang($lng)
     {
         $this->lng = array_merge($this->lng, $lng);
+
+        return  $this->lng;
     }
 
     /* 

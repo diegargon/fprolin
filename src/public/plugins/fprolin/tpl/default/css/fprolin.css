@@ -158,9 +158,9 @@ progress::-moz-progress-bar {
 .divTable {
   margin: 3px;
   display: table;
-  width: 100%;
+  width: 0;
   border: 5px solid #345695;
-  ;
+  white-space: nowrap;
 }
 
 .divTableHeading {

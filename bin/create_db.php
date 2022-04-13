@@ -29,6 +29,7 @@ $db->query('CREATE TABLE IF NOT EXISTS "users" (
        )');
 
 $db->insert('users', ['username' => 'admin', 'password' => 'd033e22ae348aeb5660fc2140aec35850c4da997', 'isAdmin' => 1]);
+#$db->insert('users', ['username' => 'admin', 'password' => '', 'isAdmin' => 1]);
 
 // CONFIG
 // type: 1 string, 2 int, 3 bool, 4 reserve, 5 reserve 6 reserve  7 mixedarray, 8 stringarray, 9 intarray,
@@ -72,8 +73,9 @@ $db->query('CREATE TABLE IF NOT EXISTS "plugins" (
     "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     )');
 
-$db->insert('plugins', ['name' => 'fprolin', 'provide' => 'main', 'enable' => 1, 'priority' => 3, 'version' => 0.1]);
-$db->insert('plugins', ['name' => 'SSManager', 'provide' => 'SessionManager', 'enable' => 1, 'priority' => 2, 'version' => 0.1]);
+$db->insert('plugins', ['name' => 'fprolin', 'provide' => 'main', 'enable' => 1, 'priority' => 2, 'version' => 0.1]);
+$db->insert('plugins', ['name' => 'netconn', 'provide' => 'netconn', 'enable' => 1, 'priority' => 3, 'version' => 0.1]);
+$db->insert('plugins', ['name' => 'SSManager', 'provide' => 'SessionManager', 'enable' => 1, 'priority' => 1, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'dashboard', 'enable' => 0, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'Admin', 'provide' => "Administration", 'enable' => 0, 'version' => 0.1]);
 $db->close();

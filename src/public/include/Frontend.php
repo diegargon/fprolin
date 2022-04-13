@@ -17,7 +17,7 @@ class Frontend
 
     function showPage(array $data)
     {
-        //pr($data);
+        //pr_dbg($data);
         $head = '';
         $body = '';
         $footer = '';
@@ -43,7 +43,7 @@ class Frontend
 
             foreach ($data['load_tpl'] as $tpl_data) {
                 //TODO resolv multiple father/childs levels
-                // pr($tpl_data);
+                // pr_dbg($tpl_data);
                 if (!empty($tpl_data['tpl_father']) && !empty($tpl_data['tpl_spot'])) {
                     if (isset($data['load_tpl'][$tpl_data['tpl_father']][$tpl_data['tpl_spot']])) {
                         $data['load_tpl'][$tpl_data['tpl_father']][$tpl_data['tpl_spot']] .= $this->getTpl($tpl_data['tpl'], $tpl_data);
@@ -52,10 +52,10 @@ class Frontend
                     }
                 }
             }
-            //pr($data);
+            //pr_dbg($data);
             foreach ($data['load_tpl'] as $tpl_data) {
                 if (!empty($tpl_data['tpl']) && empty($tpl_data['tpl_father']) && empty($tpl_data['tpl_spot'])) {
-                    // pr($tpl_data);
+                    //  pr_dbg($tpl_data);
                     $body .= $this->getTpl($tpl_data['tpl'], $tpl_data);
                 }
             }

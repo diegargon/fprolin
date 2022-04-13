@@ -23,6 +23,9 @@ function fprolin_init(Web $web)
     $web->setRetrieve('system', 'get_system.py', '', 'static');
     $web->setRetrieve('system', 'get_system_refresh.py', '', 'dinamic');
     $web->setRetrieve('system', 'get_network.py', '', 'all');
+
+    //$web->setWebData(array_merge($web->getWebData(), fprolin_main_sketch($web)));
+    $web->addWebData(fprolin_main_sketch($web));
 }
 
 function fprolin_main_sketch(Web $web)
@@ -37,7 +40,8 @@ function fprolin_main_sketch(Web $web)
     $side_elements['dashboard'] = ['href' => 'javascript:void(0)', 'caption' => $lng['L_DASHBOARD']];
     $side_elements['dashboard']['submenu']['system'] = ['href' => '/?page=system', 'caption' => $lng['L_SYSTEM']];
     $side_elements['dashboard']['submenu']['test'] = ['href' => '/?page=test', 'caption' => 'Test'];
-    $side_elements['network'] = ['href' => '/?page=options', 'caption' => $lng['L_OPTIONS']];
+
+    $side_elements['options'] = ['href' => '/?page=options', 'caption' => $lng['L_OPTIONS']];
 
     $page['css'][] = ['name' => $plugin_name, 'plugin' => $plugin_name];
     $page['script_link'][] = 'https://code.jquery.com/jquery-3.6.0.min.js';
@@ -70,7 +74,8 @@ function fprolin_page_index(Web $web)
         return $page;
     }
 
-    $page = fprolin_main_sketch($web);
+    //$page = fprolin_main_sketch($web);
+    $page = array_merge($web->getWebData(), $page);
 
     $page['page'] = 'index';
     $page['load_tpl']['fprolin']['msg'] = 'Hello ' . $sm->getUsername() . '!';
@@ -145,7 +150,7 @@ function fprolin_page_logout(Web $web)
 
 function fprolin_page_options(Web $web)
 {
-    $page = fprolin_main_sketch($web);
+    $page = $web->getWebData();
 
     $plugin_name = 'fprolin';
 
@@ -164,7 +169,7 @@ function fprolin_page_system(Web $web)
 {
     $plugin_name = 'fprolin';
 
-    $page = fprolin_main_sketch($web);
+    $page = $web->getWebData();
 
     $page['page'] = 'system';
 
@@ -196,8 +201,7 @@ function fprolin_page_test(Web $web)
 {
     $plugin_name = 'fprolin';
 
-    $page = fprolin_main_sketch($web);
-
+    $page = $web->getWebData();
     $page['page'] = 'test';
 
     //Direct add
