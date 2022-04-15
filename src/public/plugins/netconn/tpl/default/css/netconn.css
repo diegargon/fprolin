@@ -1,0 +1,69 @@
+/*
+
+*/
+
+.tableTitle {
+    margin: 3px;
+    width: 0;
+    border: 3px solid #345695;
+    background-color: #345695;
+    width: 99%;
+}
+
+.network_container {
+    border: 0px solid red;
+    width: 75%;
+    overflow: auto;
+}
+
+#net_forwardbrief {
+    border: 0px solid yellow;
+    overflow: auto;
+    font-size: 0.9em;
+}
+
+#net_forwardbrief .divTable {
+    border: 0px solid rgb(104, 230, 1);
+    width: 99%;
+}
+
+#net_forwardbrief .divTableCell {
+    border-bottom: 1px outset grey;
+    overflow: hidden;
+}
+
+#reload {
+    font-size: 14px;
+}
+
+/* DATATIP */
+
+[data-tooltip]:before {
+    /* needed - do not touch */
+    content: attr(data-tooltip);
+    position: absolute;
+    opacity: 0;
+
+    /* customizable */
+    transition: all 0.15s ease;
+    padding: 10px;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 2px 2px 1px silver;
+}
+
+[data-tooltip]:hover:before {
+    /* needed - do not touch */
+    opacity: 1;
+
+    /* customizable */
+    background: yellow;
+    margin-top: -50px;
+    margin-left: 20px;
+}
+
+[data-tooltip]:not([data-tooltip-persistent]):before {
+    pointer-events: none;
+}
+
+/* END DATATIP */

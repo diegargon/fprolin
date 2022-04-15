@@ -6,11 +6,10 @@
         refresh_network();
     });
 
-    function refresh_network() {
-        page = 'localconn';
-
+    function get_cells(row) {        
+        var cell = '';
         const conn_state = {
-            1: "ESTABLIS",
+            1: "ESTABLISHED",
             2: "SYNC_SENT",
             3: "SYNC_RECV",
             4: "FIN_WAIT1",
@@ -25,6 +24,33 @@
             13: "MAX_STATES",
         };
 
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['stype'] + '</div>';        
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' +  conn_state[row['state']] + '</div>';
+        if(row['lhost']) {
+            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lhost'] + '</div>';
+        } else {
+            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['laddr'] + '</div>';
+        }
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lport'] + '</div>';
+        if(row['rhost']) {
+            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rhost'] + '</div>';
+        } else {        
+            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['raddr'] + '</div>';
+        }
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['uid'] + '</div>'; 
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rport'] + '</div>';        
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['timeout'] + '</div>'; 
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['inode'] + '</div>'; 
+        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['layer'] + '</div>';        
+        return cell;
+    }
+        
+    function refresh_network() {
+        page = 'localconn';
+
+        var scroll = $(window).scrollTop();
+
+
         $.get('refresher.php', {
                 page: page
             })
@@ -32,49 +58,38 @@
                 //console.log(data);
                 var jsonData = JSON.parse(data);
                 //console.log(jsonData);
-                if (jsonData.result !== "ok") {
-                    console.log("No OK");
-                    return false;
+                if (jsonData.result !== "ok") {                    
+                    if(jsonData.result === "fail") {
+                        return data;
+                    } 
+                    return false;  
                 }
 
                 $("div[id^='netlocal_row']").empty();
                 $("div[id^='netlocal_listen_row']").empty();
+                $("div[id^='netlocal_established_row']").empty();
                 for (const element of jsonData.data) {
                     if ($.isArray(element.value)) {
 
                         values = element.value;
                         //console.log(values);                        
 
-                        $.each(values, function(key, value) {
+                        $.each(values, function(key, row) {
                             //console.log(value['id']);
 
-                            var row;
-                            row = '<div id="netlocal_row_' + value['id'] + '" class="divTableRow">';
-                            for (var tag in value) {
-                                if (tag == "id" || tag == "seq") {
-                                    continue;
-                                }
-                                row = row + '<div class="divTableCell" style="border-bottom:1px outset grey"><span id="' + tag + '_' + value['id'] + '">';
-                                if (tag == 'state') {
-                                    if (value['stype'] == 'udp' && value['state'] == 7) {
-                                        row = row + conn_state[10];
-                                    } else {
-                                        row = row + conn_state[value[tag]];
-                                    }
-                                } else {
-                                    row = row + value[tag];
-                                }
-                                row = row + '</span></div>';
-                            }
-                            row = row + '</div>';
-                            if (value['state'] == 10) {
-                                $('#netlocal_listen_table').append(row);
-                            } else if (value['state'] == 1) {
-                                $('#netlocal_established_table').append(row);
-                            } else if (value['stype'] == 'udp' && value['state'] == 7) {
-                                $('#netlocal_listen_table').append(row);
+                            var html_row;
+                            html_row = '<div id="netlocal_row_' + row['id'] + '" class="divTableRow">';
+                            html_row += get_cells(row);
+                            html_row += '</div>';
+
+                            if (row['state'] == 10) {
+                                $('#netlocal_listen_table').append(html_row);
+                            } else if (row['state'] == 1) {
+                                $('#netlocal_established_table').append(html_row);
+                            } else if (row['stype'] == 'udp' && row['state'] == 7) {
+                                $('#netlocal_listen_table').append(html_row);
                             } else {
-                                $('#netlocal_table').append(row);
+                                $('#netlocal_table').append(html_row);
                             }
                             //console.log(row);
                         });
@@ -82,6 +97,7 @@
 
 
                 }
+                $("html").scrollTop(scroll);
                 setTimeout(refresh_network, 5000);
             });
     }
@@ -89,7 +105,7 @@
 
 <div class="network_container">
     <!-- LocalTable -->
-    <div class="divTable" style="font-size:12px;float:left;">
+    <div class="divTable" style="font-size:11px;float:left;">
         <span><?= $lng['L_OTHER'] ?></span>
         <div id="netlocal_table" class="divTableBody">
 
@@ -112,7 +128,7 @@
     </div>
     <!-- /LocalTable -->
     <!-- LocalEstablishedTable -->
-    <div class="divTable" style="font-size:12px;float:left;">
+    <div class="divTable" style="font-size:11px;float:left;">
         <span><?= $lng['L_ESTABLISHED'] ?></span>
         <div id="netlocal_established_table" class="divTableBody">
             <div class="divTableRow">
@@ -134,7 +150,7 @@
     </div>
     <!-- /LocalEsablishedTable -->
     <!-- LocalListenTable -->
-    <div class="divTable" style="font-size:12px;float:left;">
+    <div class="divTable" style="font-size:11px;float:left;">
         <span><?= $lng['L_LISTEN'] ?></span>
         <div id="netlocal_listen_table" class="divTableBody">
             <div class="divTableRow">

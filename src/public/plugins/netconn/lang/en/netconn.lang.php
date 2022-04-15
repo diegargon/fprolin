@@ -8,16 +8,19 @@ $_lng = [
     //E
     'L_ESTABLISHED' => 'Established',
     //F
+    'L_FORWARDCONN' => 'Forward',
+    'L_FORWARDCONNBRIEF' => 'Forward Brief',
     //G
     //H
     //I
+    'L_ID' => 'Id',
     'L_INODE' => 'Inode',
     //J
     //K
     //L
     'L_LISTEN' => 'Listen',
     'L_NETLAYER' => 'Layer',
-    'L_LOCALCONN' => 'Local Conn',
+    'L_LOCALCONN' => 'Local',
     //M
     //N
     //O

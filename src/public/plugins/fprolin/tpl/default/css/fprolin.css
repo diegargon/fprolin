@@ -159,7 +159,7 @@ progress::-moz-progress-bar {
   margin: 3px;
   display: table;
   width: 0;
-  border: 5px solid #345695;
+  border: 3px solid #345695;
   white-space: nowrap;
 }
 
