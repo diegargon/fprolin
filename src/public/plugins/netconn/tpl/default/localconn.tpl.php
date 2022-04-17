@@ -6,7 +6,7 @@
         refresh_network();
     });
 
-    function get_cells(row) {        
+    function get_cells(row) {
         var cell = '';
         const conn_state = {
             1: "ESTABLISHED",
@@ -24,27 +24,33 @@
             13: "MAX_STATES",
         };
 
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['stype'] + '</div>';        
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' +  conn_state[row['state']] + '</div>';
-        if(row['lhost']) {
-            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lhost'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['stype'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">';
+        if(row['stype'] != "tcp") {
+            cell += 'STATELESS';
         } else {
-            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['laddr'] + '</div>';
+            cell += conn_state[row['state']];
         }
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lport'] + '</div>';
-        if(row['rhost']) {
-            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rhost'] + '</div>';
-        } else {        
-            cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['raddr'] + '</div>';
+        cell += '</div>';
+        if (row['lhost']) {
+            cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lhost'] + '</div>';
+        } else {
+            cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['laddr'] + '</div>';
         }
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['uid'] + '</div>'; 
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rport'] + '</div>';        
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['timeout'] + '</div>'; 
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['inode'] + '</div>'; 
-        cell  += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['layer'] + '</div>';        
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['lport'] + '</div>';
+        if (row['rhost']) {
+            cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rhost'] + '</div>';
+        } else {
+            cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['raddr'] + '</div>';
+        }
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['uid'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['rport'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['timeout'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['inode'] + '</div>';
+        cell += '<div class="divTableCell" style="border-bottom:1px outset grey">' + row['layer'] + '</div>';
         return cell;
     }
-        
+
     function refresh_network() {
         page = 'localconn';
 
@@ -58,11 +64,11 @@
                 //console.log(data);
                 var jsonData = JSON.parse(data);
                 //console.log(jsonData);
-                if (jsonData.result !== "ok") {                    
-                    if(jsonData.result === "fail") {
+                if (jsonData.result !== "ok") {
+                    if (jsonData.result === "fail") {
                         return data;
-                    } 
-                    return false;  
+                    }
+                    return false;
                 }
 
                 $("div[id^='netlocal_row']").empty();
@@ -104,29 +110,6 @@
 </script>
 
 <div class="network_container">
-    <!-- LocalTable -->
-    <div class="divTable" style="font-size:11px;float:left;">
-        <span><?= $lng['L_OTHER'] ?></span>
-        <div id="netlocal_table" class="divTableBody">
-
-            <div class="divTableRow">
-                <div class="divTableHeading"><?= $lng['L_TYPE'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_STATE'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_SOURCE_ADDR'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_SOURCE_PORT'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_REMOTE_ADDR'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_REMOTE_PORT'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_UID'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_TIMEOUT'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_INODE'] ?></div>
-                <div class="divTableHeading"><?= $lng['L_NETLAYER'] ?></div>
-            </div>
-            <div id="netlocal_row_<?= $lconn['id'] ?>" class="divTableRow">
-            </div>
-
-        </div>
-    </div>
-    <!-- /LocalTable -->
     <!-- LocalEstablishedTable -->
     <div class="divTable" style="font-size:11px;float:left;">
         <span><?= $lng['L_ESTABLISHED'] ?></span>
@@ -148,7 +131,30 @@
 
         </div>
     </div>
-    <!-- /LocalEsablishedTable -->
+    <!-- /LocalEstablishedTable -->
+    <!-- LocalTable -->
+    <div class="divTable" style="font-size:11px;float:left;">
+        <span>*</span>
+        <div id="netlocal_table" class="divTableBody">
+
+            <div class="divTableRow">
+                <div class="divTableHeading"><?= $lng['L_TYPE'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_STATE'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_SOURCE_ADDR'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_SOURCE_PORT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_REMOTE_ADDR'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_REMOTE_PORT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_UID'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_TIMEOUT'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_INODE'] ?></div>
+                <div class="divTableHeading"><?= $lng['L_NETLAYER'] ?></div>
+            </div>
+            <div id="netlocal_row_<?= $lconn['id'] ?>" class="divTableRow">
+            </div>
+
+        </div>
+    </div>
+    <!-- /LocalTable -->
     <!-- LocalListenTable -->
     <div class="divTable" style="font-size:11px;float:left;">
         <span><?= $lng['L_LISTEN'] ?></span>

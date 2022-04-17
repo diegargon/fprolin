@@ -2,13 +2,13 @@
 
 function netconn_init(Web $web)
 {
+    $plugin_name = 'netconn';
+
     $cfg = $web->getConfig();
     //$sm = $web->getProvider('SessionManager');
-    $lng = $web->getLang();
-    require_once('lang/' . $cfg['lang'] . '/netconn.lang.php');
-    $lng = $web->setLang($_lng);
-
-    $plugin_name = 'netconn';
+    
+    require_once('lang/' . $cfg['lang'] . '/'. $plugin_name. '.lang.php');
+    $lng = $web->setLang($lng);
 
     $web->setPage(['localconn' => ['name' => 'localconn', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_localconn']]);
     $web->setPage(['forwardconn' => ['name' => 'forwardconn', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_forwardconn']]);

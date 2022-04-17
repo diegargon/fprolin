@@ -86,7 +86,7 @@ class Web
 
     function addWebData(array $webdata)
     {
-        $this->webdata = array_merge_recursive($this->webdata, $webdata);
+        $this->webdata = array_replace_recursive($this->webdata, $webdata);
     }
 
     function getPageData(array $page)

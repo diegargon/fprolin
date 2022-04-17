@@ -75,6 +75,7 @@ $db->query('CREATE TABLE IF NOT EXISTS "plugins" (
 
 $db->insert('plugins', ['name' => 'fprolin', 'provide' => 'main', 'enable' => 1, 'priority' => 2, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'netconn', 'provide' => 'netconn', 'enable' => 1, 'priority' => 3, 'version' => 0.1]);
+$db->insert('plugins', ['name' => 'netrouting', 'provide' => 'netrouting', 'enable' => 1, 'priority' => 3, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'SSManager', 'provide' => 'SessionManager', 'enable' => 1, 'priority' => 1, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'dashboard', 'enable' => 0, 'version' => 0.1]);
 $db->insert('plugins', ['name' => 'Admin', 'provide' => "Administration", 'enable' => 0, 'version' => 0.1]);

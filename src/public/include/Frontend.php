@@ -77,7 +77,7 @@ class Frontend
         $tpl_file .= 'tpl/' . $this->cfg['theme'] . '/' . $tpl . '.tpl.php';
 
         if (!file_exists($tpl_file)) {
-            echo "error gettpl";
+            echo "error gettpl $tpl_file";
             return false;
         }
 
