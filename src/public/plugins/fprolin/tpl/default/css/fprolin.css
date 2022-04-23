@@ -53,6 +53,9 @@ progress::-moz-progress-bar {
   background: rgba(173, 11, 11, 0.555);
 }
 
+p {
+  line-height: 2px;
+}
 /* Login Page */
 
 .login_page {

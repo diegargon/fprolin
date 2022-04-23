@@ -4,8 +4,8 @@
 <script>
     var request;
     var sources = [];
-    var show_udp_packets = true;
-    var states_off = [];
+    var show_domain_packets = true;
+
     /* TIMER */
     var timeOut = null;
 
@@ -18,28 +18,12 @@
         }
     }
 
-    function toggle_udp_packets() {
-        show_udp_packets = !show_udp_packets;
-        if (show_udp_packets) {
-            document.querySelector('#toggle_udp').innerText = '!UDP';
+    function toggle_domain_packets() {
+        show_domain_packets = !show_domain_packets;
+        if (show_domain_packets) {
+            document.querySelector('#toggle_domain').innerText = '!UDP';
         } else {
-            document.querySelector('#toggle_udp').innerText = 'UDP';
-        }
-    }
-
-    function toggle_state(state) {
-        if (state in states_off) {
-            if (state == 'CLOSE') {
-                delete states_off['CLOSE_WAIT'];
-            }
-            delete states_off[state];
-            document.querySelector('#toggle_' + state).innerText = '!' + state;
-        } else {
-            if (state == 'CLOSE') {
-                states_off['CLOSE_WAIT'] = 1;
-            }
-            states_off[state] = 1;
-            document.querySelector('#toggle_' + state).innerText = state;
+            document.querySelector('#toggle_domain').innerText = 'UDP';
         }
     }
 
@@ -101,7 +85,7 @@
             }
             cell += '</div>';
         } else {
-            cell += '<div class="divTableCell" style="width:40px;max-width:40px;">' + row['daddr'] + '</div>';
+            cell += '<div class="divTableCell" style="width:40;max-width:40px;">' + row['daddr'] + '</div>';
         }
         cell += '<div class="divTableCell" style="width:10px;max-width:10px;">' + row['dport'] + '</div>';
         cell += '<div class="divTableCell" style="width:10px;max-width:10px;">' + row['timeout'] + '</div>';
@@ -163,7 +147,7 @@
                     }
                     return false;
                 }
-
+                
                 for (const element of jsonData.data) {
                     if ($.isArray(element.value)) {
                         for (const row of element.value) {
@@ -176,14 +160,10 @@
                         for (const row of element.value) {
                             var matches = 0;
                             tag = row['saddr'];
-                            if (show_udp_packets === false && row['stype'] == 'udp') {
+                            if (show_domain_packets === false && row['dport'] == '53') {
                                 continue;
                             }
-                            if (row['state'] && row['state'] in states_off) {
-                                continue;
-                            } else if (!row['state'] && 'STATELESS' in states_off) {
-                                continue;
-                            }
+
                             var dports_filter = document.getElementById("dport_filter").value;
 
                             if (dports_filter) {
@@ -265,12 +245,7 @@
 <div class="network_container">
     <button id="reload">&#8635;</button>
     <button id="set_timer">&#9202;</button>
-    <button id="toggle_udp" onclick="toggle_udp_packets()">!UDP</button>
-    <button id="toggle_TIME_WAIT" onclick="toggle_state('TIME_WAIT')">!TIME_WAIT</button>
-    <button id="toggle_CLOSE" onclick="toggle_state('CLOSE')">!CLOSE</button>
-    <button id="toggle_STATELESS" onclick="toggle_state('STATELESS')">!STATELESS</button>
-    <button id="toggle_LAST_ACK" onclick="toggle_state('LAST_ACK')">!LAST_ACK</button>
-    <button id="toggle_ESTABLISHED" onclick="toggle_state('ESTABLISHED')">!ESTABLISHED</button>
+    <button id="toggle_domain" onclick="toggle_domain_packets()">!UDP</button>
     <input id="dport_filter" type="text" placeholder="dport,"></input>
     <div id="net_forwardbrief"></div>
 </div>

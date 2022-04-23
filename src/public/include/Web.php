@@ -96,6 +96,8 @@ class Web
         if (function_exists($page_func)) {
             $page_data = $page_func($this);
         } else {
+            echo "Page not exists";
+            exit();
             //TODO error
         }
 

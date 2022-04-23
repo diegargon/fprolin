@@ -1,0 +1,48 @@
+/*
+
+*/
+
+.ethernet_status {
+    margin: 0 auto;
+    width: 15px;
+    height: 15px;
+}
+
+.eth_bg_on {
+    background-color: green;
+}
+
+.eth_bg_off {
+    background-color: gray;
+}
+
+.ethernet_img {
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+#interfaces .divTableCell {
+    border-bottom: 1px outset grey;
+}
+
+#interfaces .divTableCell:first-child {
+    text-align: center;
+}
+
+.ethernet_container {
+    /* border:1px solid blue; */
+    margin: 0 auto;
+    min-width: 40px;
+}
+
+.ethernet_img_container {
+    display: block;
+    margin: 0 auto;
+}
+
+.ethernet_status_container {
+    display: block;
+    margin: 0 auto;
+}
