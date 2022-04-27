@@ -190,7 +190,6 @@ p {
 .divTableCell:first-child {
   text-align: right;
   width: 100px;
-
 }
 
 .divTableFoot {
@@ -201,6 +200,13 @@ p {
 
 .divTableBody {
   display: table-row-group;
+}
+
+.divTableCaption {
+  display: table-caption;
+  background-color: #345695;
+  caption-side: top;
+  width: 100%;  
 }
 
 /* END DIVTABLE */

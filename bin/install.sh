@@ -51,3 +51,9 @@ systemctl restart lighttpd
 #Used in WOSProxy
 apt install python3-pip -y
 pip install psutil
+
+#optional bridge support
+apt install bridge-utils
+
+#optional pppoe 
+apt install pppoe pppoeconf/et

@@ -11,6 +11,7 @@ function netinterfaces_init(Web $web)
 
 
     $web->setPage(['interfaces' => ['name' => 'interfaces', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_interfaces']]);
+    $web->setPage(['interface' => ['name' => 'interface', 'plugin_name' => $plugin_name, 'func_name' => $plugin_name . '_page_interface']]);
 
     $side_elements['network'] = ['href' => 'javascript:void(0)', 'caption' => $lng['L_NETWORK']];
     $side_elements['network']['submenu']['interfaces'] = ['href' => '/?page=interfaces', 'caption' => $lng['L_INTERFACES']];
@@ -26,7 +27,7 @@ function netinterfaces_page_interfaces($web)
 {
     $plugin_name = 'netinterfaces';
 
-
+    $cfg = $web->getConfig();
     $page = $web->getWebData();
     $page['page'] = 'interfaces';
     $interfaces_data =  $web->retrieve($page['page'], 'static');
@@ -38,8 +39,6 @@ function netinterfaces_page_interfaces($web)
         'tpl_father' => 'fprolin',
         'tpl_spot' => 'main'
     ];
-
-    $cfg = $web->getConfig();
 
     $page['load_tpl']['interfaces']['img_path'] = '/plugins/' . $plugin_name . '/tpl/' . $cfg['theme']  . '/img';
 
@@ -57,13 +56,45 @@ function netinterfaces_page_interfaces($web)
             }
             //$page['load_tpl']['interfaces']['ifaces'] = $vdata;
         }
-
+        
+        
         if (isset($interfaces_info)) {
+            if (isset($interfaces_info['lo'])) {
+                unset($interfaces_info['lo']);
+            }
+            usort($interfaces_info, function($a, $b) {
+                return $a['devtype'] <=> $b['devtype'];
+            });            
             $page['load_tpl']['interfaces']['ifaces'] = $interfaces_info;
         }
         //pr_dbg($page['load_tpl']['interfaces']['ifaces']);
 
     }
     //pr_dbg($page);
+    return $page;
+}
+
+
+function netinterfaces_page_interface($web)
+{
+    $plugin_name = 'netinterfaces';
+
+    $cfg = $web->getConfig();
+    $page = $web->getWebData();    
+    $page['page'] = 'view_interface';
+
+    $interfaces_data =  $web->retrieve($page['page'], 'static');
+
+    $page['css'][] = ['name' => $plugin_name, 'plugin' => $plugin_name];
+
+    $page['load_tpl']['view_interfaces']['img_path'] = '/plugins/' . $plugin_name . '/tpl/' . $cfg['theme']  . '/img';
+
+    $page['load_tpl']['view_interfaces'] = [
+        'plugin' => $plugin_name,
+        'tpl' => 'view_interface',
+        'tpl_father' => 'fprolin',
+        'tpl_spot' => 'main'
+    ];
+
     return $page;
 }

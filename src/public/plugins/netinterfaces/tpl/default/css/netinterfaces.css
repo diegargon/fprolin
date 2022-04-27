@@ -46,3 +46,17 @@
     display: block;
     margin: 0 auto;
 }
+.row_link {
+    display:contents;
+    text-decoration: none;
+    color:inherit;
+}
+.row_link:visited {
+    color:inherit;
+}
+
+.interfaces_category {
+    display:block;
+    background-color: gray;
+    white-space: nowrap;
+}
